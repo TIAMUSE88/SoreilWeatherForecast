@@ -15,7 +15,7 @@ function displayWeather(response) {
   descriptionElement.innerHTML = response.data.condition.description;
   humidityElement.innerHTML = `${response.data.temperature.humidity}%`;
   windElement.innerHTML = `${response.data.wind.speed}km/h`;
-  iconElement.innerHTML = `<img src="${response.data.condition.icon_url}" />`;
+  iconElement.innerHTML = `<img src="${getWeatherIconUrl(response.data.condition.icon_url)}" alt="${response.data.condition.description}" />`;
   console.log(response.data);
   forecastResult(response.data.city);
 }
@@ -70,7 +70,7 @@ function displayForecast(response) {
     let dayName = formatDay(day.time);
     let maxTemp = Math.round(day.temperature.maximum);
     let minTemp = Math.round(day.temperature.minimum);
-    let iconUrl = day.condition.icon_url;
+    let iconUrl = getWeatherIconUrl(day.condition.icon_url);
     let description = day.condition.description;
 
     forecastHtml += `
@@ -90,6 +90,32 @@ function displayForecast(response) {
   if (forecastElement) {
     forecastElement.innerHTML = forecastHtml;
   }
+}
+
+function getWeatherIconUrl(url) {
+  let googleIcons = {
+    "clear-sky-day.png": "sunny",
+    "clear-sky-night.png": "sunny",
+    "few-clouds-day.png": "mostly_sunny",
+    "few-clouds-night.png": "mostly_sunny",
+    "scattered-clouds-day.png": "partly_cloudy",
+    "scattered-clouds-night.png": "partly_cloudy",
+    "broken-clouds-day.png": "mostly_cloudy",
+    "broken-clouds-night.png": "mostly_cloudy",
+    "shower-rain-day.png": "showers",
+    "shower-rain-night.png": "showers",
+    "rain-day.png": "showers",
+    "rain-night.png": "showers",
+    "thunderstorm-day.png": "showers",
+    "thunderstorm-night.png": "showers",
+    "snow-day.png": "heavy_snow",
+    "snow-night.png": "heavy_snow",
+    "mist-day.png": "cloudy",
+    "mist-night.png": "cloudy",
+  };
+  let iconName = url.split("/").pop();
+  let googleIcon = googleIcons[iconName] || "cloudy";
+  return `https://maps.gstatic.com/weather/v1/${googleIcon}.svg`;
 }
 
 function formatDay(timestamp) {
